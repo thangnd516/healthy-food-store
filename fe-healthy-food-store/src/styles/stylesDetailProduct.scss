@@ -1,0 +1,47 @@
+.button-buy-now {
+  transition: all 0.2s linear;
+  position: relative;
+  z-index: 1;
+  &::before {
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 0;
+    background-color: #fe0000;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    transition: all 0.2s linear;
+  }
+  &:hover {
+    color: white;
+  }
+  &:hover::before {
+    width: 100%;
+  }
+}
+.button-add-to-cart,
+.button-detail-product {
+  transition: all 0.2s linear;
+  position: relative;
+  z-index: 1;
+  border: 1px solid transparent;
+  &::before {
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 0;
+    background-color: white;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    transition: all 0.2s linear;
+  }
+  &:hover {
+    color: #fe0000;
+    border-color: #fe0000;
+  }
+  &:hover::before {
+    width: 100%;
+  }
+}

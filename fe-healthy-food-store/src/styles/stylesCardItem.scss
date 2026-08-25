@@ -1,0 +1,13 @@
+.card-item {
+  transition: all 0.3s linear;
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+.ingredient-desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

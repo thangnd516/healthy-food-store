@@ -1,0 +1,11 @@
+.infor-nutire,
+.detail-meal {
+  opacity: 0;
+  visibility: hidden;
+}
+.infor-button:hover + .infor-nutire,
+.detail-meal-button:hover + .detail-meal {
+  opacity: 1;
+  visibility: visible;
+  transition: all 0.3s linear;
+}
