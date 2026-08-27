@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { editMeal } from "../../../services/meal";
 import Dropdown from "../../Dropdown/Dropdown";
 import { IMeal } from "../../../types/typeMeal";
-import { uploadImageForMeal } from "../../../services/imagemeal";
 
 interface IProps {
   isModalOpenEdit: boolean;
@@ -42,22 +41,14 @@ const ModalAddEditMeal = (props: IProps) => {
   const [form] = Form.useForm();
   const { TextArea } = Input;
   const [imageMealDisplay, setImageMealDisplay] = useState("");
-  const [imageMeal, setImageMeal] = useState("");
+  const [imageMeal, setImageMeal] = useState<any>("");
   const [selectedIngredient, setSelectedIngredient] = useState<any>([]);
-  const [urlImage, setUrlImage] = useState("");
   const handleCancel = () => {
     setIsModalOpenEdit(false);
   };
   const handleChangeImage = (event: any) => {
     setImageMealDisplay(URL.createObjectURL(event.target.files[0]));
     setImageMeal(event.target.files[0]);
-  };
-  const handleUploadImageForMeal = async () => {
-    const response: any = await uploadImageForMeal(imageMeal);
-    if (response?.statusCode === 200) {
-      setUrlImage(response?.createdImage?.image);
-      toast.success("Edit image for meal successfull!");
-    }
   };
 
   let ingredients = selectedIngredient?.map((item: any) => ({
@@ -92,9 +83,11 @@ const ModalAddEditMeal = (props: IProps) => {
         setSelectedIngredient(dataEditIngredientOfMeal);
       if (dataEditMeal?.image) {
         setImageMealDisplay(dataEditMeal?.image);
-        setUrlImage(dataEditMeal?.image);
       } else setImageMealDisplay("");
     }
+  }, [dataEditMeal]);
+  useEffect(() => {
+    if (dataEditMeal && !imageMeal) setImageMeal(dataEditMeal?.image);
   }, [dataEditMeal]);
   const onFinish: FormProps<FieldType>["onFinish"] = async (values: any) => {
     const {
@@ -139,7 +132,7 @@ const ModalAddEditMeal = (props: IProps) => {
       ingredients,
     };
     if (dataEditMeal) {
-      const response: any = await editMeal(data, urlImage, dataEditMeal?._id);
+      const response: any = await editMeal(data, imageMeal, dataEditMeal?._id);
       if (response?.statusCode === 200) {
         toast.success("Edit meal successfully!");
         setIsModalOpenEdit(false);
@@ -193,13 +186,6 @@ const ModalAddEditMeal = (props: IProps) => {
                   Preview Image
                 </span>
               )}
-              <Button
-                type="primary"
-                className="absolute -translate-x-1/2 -bottom-10 left-1/2"
-                onClick={handleUploadImageForMeal}
-              >
-                Lưu hình
-              </Button>
             </div>
           </div>
           <div className="flex gap-x-5">

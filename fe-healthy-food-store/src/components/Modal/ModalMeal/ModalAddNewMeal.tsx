@@ -5,7 +5,6 @@ import { useState } from "react";
 import { addNewMeal } from "../../../services/meal";
 
 import Dropdown from "../../Dropdown/Dropdown";
-import { uploadImageForMeal } from "../../../services/imagemeal";
 
 interface IProps {
   isModalOpenAdd: boolean;
@@ -39,10 +38,9 @@ const ModalAddNewMeal = (props: IProps) => {
   const [form] = Form.useForm();
   const { isModalOpenAdd, setIsModalOpenAdd, fetchDataMeal } = props;
   const { TextArea } = Input;
-  const [imageMeal, setImageMeal] = useState("");
+  const [imageMeal, setImageMeal] = useState<any>("");
   const [imageMealDisplay, setImageMealDisplay] = useState("");
   const [selectedIngredient, setSelectedIngredient] = useState<any>([]);
-  const [urlImage, setUrlImage] = useState("");
   const handleCancel = () => {
     setIsModalOpenAdd(false);
   };
@@ -92,7 +90,7 @@ const ModalAddNewMeal = (props: IProps) => {
       kind: "meal",
       ingredients,
     };
-    const response: any = await addNewMeal(data, urlImage);
+    const response: any = await addNewMeal(data, imageMeal);
     if (response?.statusCode === 200) {
       toast.success("Create new meal successfully!");
       form.resetFields();
@@ -108,13 +106,6 @@ const ModalAddNewMeal = (props: IProps) => {
   const handleChangeImage = (event: any) => {
     setImageMealDisplay(URL.createObjectURL(event.target.files[0]));
     setImageMeal(event.target.files[0]);
-  };
-  const handleUploadImageForMeal = async () => {
-    const response: any = await uploadImageForMeal(imageMeal);
-    if (response?.statusCode === 200) {
-      setUrlImage(response?.createdImage?.image);
-      toast.success("Create new image for meal successfull!");
-    } else toast.error("Create new image for meal fail!");
   };
   return (
     <>
@@ -158,13 +149,6 @@ const ModalAddNewMeal = (props: IProps) => {
                   Preview Image
                 </span>
               )}
-              <Button
-                type="primary"
-                className="absolute -translate-x-1/2 -bottom-10 left-1/2"
-                onClick={handleUploadImageForMeal}
-              >
-                Lưu hình
-              </Button>
             </div>
           </div>
           <div className="flex gap-x-5">

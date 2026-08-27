@@ -39,7 +39,6 @@ const TableMeal = (props: IProps) => {
     setDataEditMeal,
     fetchDataMeal,
   } = props;
-  console.log("listMeals", listMeals);
   const confirm = async (meal: IMeal) => {
     const response: any = await deleteMeal(meal?._id);
     if (response.statusCode === 200) {
