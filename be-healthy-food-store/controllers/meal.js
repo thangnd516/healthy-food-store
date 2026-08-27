@@ -1,7 +1,11 @@
 const Meal = require("../models/meal");
 const asyncHandler = require("express-async-handler");
+const { deleteCloudinaryImage } = require("../utils/cloudinaryImage");
 
 const createMeal = asyncHandler(async (req, res) => {
+  const image = req?.file?.path;
+  if (image) req.body.image = image;
+  if (req.body.ingredients) req.body.ingredients = JSON.parse(req.body.ingredients);
   const { name } = req.body;
   if (Object.keys(req.body).length === 0) throw new Error("Missing inputs");
   const nameMeal = await Meal.findOne({ name });
@@ -32,10 +36,15 @@ const createMealRecommend = asyncHandler(async (req, res) => {
 const updateMeal = asyncHandler(async (req, res) => {
   const { mid } = req.params;
   const image = req?.file?.path;
+  const oldMeal = image ? await Meal.findById(mid) : null;
   if (image) req.body.image = image;
+  if (req.body.ingredients) req.body.ingredients = JSON.parse(req.body.ingredients);
   const updateMeal = await Meal.findByIdAndUpdate(mid, req.body, {
     new: true,
   });
+  if (image && oldMeal?.image) {
+    await deleteCloudinaryImage(oldMeal.image);
+  }
   return res.status(200).json({
     statusCode: updateMeal ? 200 : 400,
     updatedMeal: updateMeal ? updateMeal : "Cannot update Meal",
@@ -133,6 +142,9 @@ const deleteMeal = asyncHandler(async (req, res) => {
   const { mid } = req.params;
   if (!mid) throw new Error("Missing input");
   const response = await Meal.findByIdAndDelete(mid);
+  if (response?.image) {
+    await deleteCloudinaryImage(response.image);
+  }
   return res.status(200).json({
     statusCode: response ? 200 : 400,
     deletedMeal: response

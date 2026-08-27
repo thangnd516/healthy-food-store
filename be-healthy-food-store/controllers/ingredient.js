@@ -1,5 +1,6 @@
 const Ingredient = require("../models/ingredient");
 const asyncHandler = require("express-async-handler");
+const { deleteCloudinaryImage } = require("../utils/cloudinaryImage");
 
 const createIngredient = asyncHandler(async (req, res) => {
   const image = req?.file?.path;
@@ -23,10 +24,14 @@ const createIngredient = asyncHandler(async (req, res) => {
 const updateIngredient = asyncHandler(async (req, res) => {
   const { iid } = req.params;
   const image = req?.file?.path;
+  const oldIngredient = image ? await Ingredient.findById(iid) : null;
   if (image) req.body.image = image;
   const updateIngredient = await Ingredient.findByIdAndUpdate(iid, req.body, {
     new: true,
   });
+  if (image && oldIngredient?.image) {
+    await deleteCloudinaryImage(oldIngredient.image);
+  }
   return res.status(200).json({
     statusCode: updateIngredient ? 200 : 400,
     updatedIngredient: updateIngredient
